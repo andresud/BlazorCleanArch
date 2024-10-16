@@ -1,0 +1,6 @@
+@OneStream.infra.InMemoryRepository_HostAddress = http://localhost:5249
+
+GET {{OneStream.infra.InMemoryRepository_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
