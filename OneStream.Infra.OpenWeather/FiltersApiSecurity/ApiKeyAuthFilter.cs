@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.VisualBasic;
 
-namespace OneStream.infra.InMemoryRepository.FiltersApiSecurity
+namespace OneStream.infra.OpenWeather.FiltersApiSecurity
 {
     public class ApiKeyAuthFilter : IAuthorizationFilter
     {

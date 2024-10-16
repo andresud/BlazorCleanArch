@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using OneStream.WebUi.Providers
+@inject TokenAuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        Hello, @username!
+        <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
+    </Authorized>
+    <NotAuthorized>
+        <a href="/login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+    private string username = "User not authenticated";
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            username = user.Identity?.Name ?? "Unknown User";
+        }
+        else
+        {
+            username = "User not authenticated";
+        }
+    }
+    public async void BeginLogOut()
+    {
+        await AuthProvider.Logout();
+        Navigation.NavigateTo("/");
+    }
+}

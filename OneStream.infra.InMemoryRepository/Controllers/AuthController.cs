@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OneStream.Infra.OpenWeather.Auth;
+using OneStream.Infra.InMemoryRepository.Auth;
 
-namespace OneStream.Infra.OpenWeather.Controllers
+namespace OneStream.Infra.InMemoryRepository.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

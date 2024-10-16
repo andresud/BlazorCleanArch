@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace OneStream.Infra.OpenWeather.Auth
+namespace OneStream.Infra.InMemoryRepository.Auth
 {
     public class TokenService
     {

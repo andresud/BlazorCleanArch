@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace OneStream.infra.InMemoryRepository.FiltersApiSecurity
+namespace OneStream.infra.OpenWeather.FiltersApiSecurity
 {
     public class ApiKeyAttribute : ServiceFilterAttribute
     {

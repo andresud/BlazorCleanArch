@@ -1,0 +1,60 @@
+﻿@page "/login"
+@inject TokenAuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
+@inject ILogger<LoginPage> _logger
+@using OneStream.WebUi.Providers
+@using System.Text.Json
+
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h5">Login</MudText>
+
+        <MudTextField @bind-Value="username" Label="Username" />
+        <MudTextField @bind-Value="password" Label="Password" InputType="InputType.Password" />
+
+        <MudButton Color="Color.Primary" OnClick="LoginUser">Login</MudButton>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    private string username;
+    private string password;
+
+    private async Task LoginUser()
+    {
+        //string loginModel = $"{{\"username\":\"{Username}\", \"password\":\"{Password}\"}}";
+        var loginModel = new { username, password };
+
+
+        using (HttpClient client = new HttpClient())
+        {
+            client.BaseAddress = new Uri("https://localhost:7049");
+            try
+            {
+                var address = client.BaseAddress + "api/Auth/login";
+                var response = await client.PostAsJsonAsync("/api/Auth/login", loginModel);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<TokenResult>();
+                    await AuthProvider.Login(result.Token);
+                    Nav.NavigateTo("/");
+                }
+            }
+            catch (HttpRequestException exception)
+            {
+                _logger.LogError(exception, "HttpRequestException when calling the API");                
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Unhandled exception when calling the API");
+
+            }
+        }
+    }
+
+    public class TokenResult
+    {
+        public string Token { get; set; }
+    }
+}

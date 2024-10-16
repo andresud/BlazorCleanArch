@@ -1,24 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OneStream.Domain.Entities;
-using OneStream.infra.InMemoryRepository.Data;
-using OneStream.infra.InMemoryRepository.FiltersApiSecurity;
 using OneStream.infra.InMemoryRepository.Services;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace OneStream.infra.InMemoryRepository.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]    
-    [ApiKey]
+    [ApiController]
+    [Authorize]
     public class WeatherRecordController : ControllerBase
     {
         private IWeatherRecordServices _weatherRecordServices;
+        private readonly ILogger<WeatherRecordController> _logger;
 
-        public WeatherRecordController(IWeatherRecordServices service)
+        public WeatherRecordController(IWeatherRecordServices service, ILogger<WeatherRecordController> logger)
         {
-           _weatherRecordServices = service;
+            _weatherRecordServices = service;
+            _logger = logger;
         }
 
         // GET: api/<WeatherRecordController>

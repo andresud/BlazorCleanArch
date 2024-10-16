@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OneStream.Domain.Interfaces;
-
+using OneStream.infra.OpenWeather.FiltersApiSecurity;
 
 namespace OneStream.Infra.OpenWeather.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [ApiKey]
     public class WeatherController : ControllerBase
     {
         private IWeatherService _openWeatherService;

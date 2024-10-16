@@ -1,0 +1,46 @@
+﻿@page "/forecasts"
+@inject TokenAuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
+@inject ILogger<LoginPage> _logger
+@using OneStream.Domain.Entities
+@using OneStream.WebUi.Providers
+@using System.Text.Json
+
+<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">    
+
+    <MudCard Class="mt-4" Style="max-width: 600px">
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                <MudAvatar Color="Color.Secondary">A</MudAvatar>
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">Apopka, FL</MudText>
+                <MudText Typo="Typo.body2">This is the Forecast for Apopka, FL</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudTooltip Text="Add to the history">
+                    <MudIconButton Icon="@Icons.Material.Filled.History" Color="Color.Default" />
+                </MudTooltip>
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardMedia Image="images/pilars.jpg" Height="250" />
+        <MudCardContent>
+            <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudTooltip Text="See the forecast history for Apopka, FL">
+                <MudIconButton Icon="@Icons.Material.Filled.List" Color="Color.Default" />            
+            </MudTooltip>
+        </MudCardActions>
+    </MudCard>
+
+</MudStack>
+
+@code {
+    private WeatherRecord weaterRecord = new WeatherRecord();
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+}

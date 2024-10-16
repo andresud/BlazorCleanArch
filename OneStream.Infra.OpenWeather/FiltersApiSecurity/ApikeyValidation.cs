@@ -1,4 +1,4 @@
-﻿namespace OneStream.infra.InMemoryRepository.FiltersApiSecurity
+﻿namespace OneStream.infra.OpenWeather.FiltersApiSecurity
 {
     public class ApikeyValidation : IApiKeyValidation
     {
