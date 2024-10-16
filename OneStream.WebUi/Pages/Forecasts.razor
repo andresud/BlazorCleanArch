@@ -14,42 +14,61 @@
     {
         <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
     }
-    <MudCard Class="mt-4" Style="max-width: 800px">
-        <MudCardHeader>
-            <CardHeaderAvatar>
-                <MudAvatar Color="Color.Secondary">A</MudAvatar>
-            </CardHeaderAvatar>
-            <CardHeaderContent>
-                <MudText Typo="Typo.body1">Apopka, FL</MudText>
-                <MudText Typo="Typo.body2">@($"This is the Forecast for Apopka, FL - {weatherRecord.Date.ToLocalTime().ToString()}")</MudText>
-            </CardHeaderContent>
-            <CardHeaderActions>
-                <MudTooltip Text="Add to the history">
-                    <MudIconButton Icon="@Icons.Material.Filled.History" OnClick="@SaveForecast" Color="Color.Default" />
+    else if (weatherRecord == null)
+    {
+        <MudCard>
+            <MudCardMedia Image="../resources/openweather.png" Height="175" />
+            <MudCardContent>
+                <MudText Typo="Typo.h5">Cannot Load Weather Forecast</MudText>
+                <MudText Typo="Typo.body2">You Probably need a Open Weather API Key to use this project.</MudText>
+                <MudText Typo="Typo.body2">Get your free key here...</MudText>
+                
+            </MudCardContent>
+            <MudCardActions>
+                <MudLink Class="p-8" Href="https://home.openweather.co.uk/users/sign_in">Open Weather</MudLink>
+            </MudCardActions>
+        </MudCard>
+    }
+    else
+    {
+        <MudCard Class="mt-4" Style="max-width: 800px">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudAvatar Color="Color.Secondary">A</MudAvatar>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.body1">Apopka, FL</MudText>
+                    <MudText Typo="Typo.body2">@($"This is the Forecast for Apopka, FL - {weatherRecord.Date.ToLocalTime().ToString()}")</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudTooltip Text="Add to the history">
+                        <MudIconButton Icon="@Icons.Material.Filled.History" OnClick="@SaveForecast" Color="Color.Default" />
+                    </MudTooltip>
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardMedia Image="../resources/apopkamap.jpg" Height="250" />
+            <MudCardContent>
+                <MudList T="string">
+                    <MudListItem Text=@($"Description: {weatherRecord.Description}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.DeviceThermostat" />
+                    <MudListItem Text=@($"Temperature: {weatherRecord.Temp.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Filled.Inbox" />
+                    <MudListItem Text=@($"WindSpeed: {weatherRecord.WindSpeed.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.Air" />
+                    <MudStack Row>
+                        <MudListItem Text=@($"Min. Temp: {weatherRecord.TempMin.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.AcUnit" />
+                        <MudListItem Text=@($"Max. Temp: {weatherRecord.TempMax.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.WbSunny" />
+                    </MudStack>
+                </MudList>
+            </MudCardContent>
+            <MudCardActions>
+                <MudTooltip Text="See the forecast history for Apopka, FL">
+                    <MudIconButton OnClick="@ShowHistory" Icon="@Icons.Material.Filled.List" Color="Color.Default" />
                 </MudTooltip>
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardMedia Image="../ressources/apopkamap.jpg" Height="250" />
-        <MudCardContent>
-            <MudList T="string">
-                <MudListItem Text=@($"Description: {weatherRecord.Description}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.DeviceThermostat" />
-                <MudListItem Text=@($"Temperature: {weatherRecord.Temp.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Filled.Inbox" />
-                <MudListItem Text=@($"WindSpeed: {weatherRecord.WindSpeed.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.Air" />
-                <MudStack Row>
-                    <MudListItem Text=@($"Min. Temp: {weatherRecord.TempMin.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.AcUnit" />
-                    <MudListItem Text=@($"Max. Temp: {weatherRecord.TempMax.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.WbSunny" />
-                </MudStack>
-            </MudList>
-        </MudCardContent>
-        <MudCardActions>
-            <MudTooltip Text="See the forecast history for Apopka, FL">
-                <MudIconButton OnClick="@ShowHistory" Icon="@Icons.Material.Filled.List" Color="Color.Default" />                
-            </MudTooltip>
-            <MudTooltip Text="Refresh Forecast">
-                <MudIconButton OnClick="@GetData" Icon="@Icons.Material.Filled.Refresh" Color="Color.Default" />
-            </MudTooltip>
-        </MudCardActions>
-    </MudCard>
+                <MudTooltip Text="Refresh Forecast">
+                    <MudIconButton OnClick="@GetData" Icon="@Icons.Material.Filled.Refresh" Color="Color.Default" />
+                </MudTooltip>
+            </MudCardActions>
+        </MudCard>
+    }
+
 
     @if (loadingList && showList)
     {
@@ -57,10 +76,10 @@
     }
     else if (showList && !loadingList)
     {
-        <MudDataGrid Items="@weaterRecordHistory">
+        <MudDataGrid Items="@weatherRecordHistory">
             <Columns>
                 <PropertyColumn Property="x => x.CityName" Title="City" />
-                <PropertyColumn Property="x => x.Date.ToLocalTime()" Title="Date/Time" />
+                <PropertyColumn Property="x => x.Date" Title="Date/Time" />
                 <PropertyColumn Property="x => x.Description" Title="Description" />
                 <PropertyColumn Property="x => x.Temp" Title="Temperature" />
                 <PropertyColumn Property="x => x.FeelsLike" Title="Feels Like" />
@@ -77,8 +96,8 @@
     private bool loadingList = false;
     private bool showList = false;
 
-    private WeatherRecord weatherRecord = new WeatherRecord();
-    private List<WeatherRecord> weaterRecordHistory = new List<WeatherRecord>();
+    private WeatherRecord weatherRecord;
+    private List<WeatherRecord> weatherRecordHistory = new List<WeatherRecord>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,7 +116,7 @@
                 var response = await client.GetAsync("api/Weather?city=Apopka&state=FL&country=US");
                 if (response.IsSuccessStatusCode)
                 {
-                    weatherRecord = await response?.Content?.ReadFromJsonAsync<WeatherRecord>();
+                    weatherRecord = await response?.Content?.ReadFromJsonAsync<WeatherRecord>();                    
                 }                  
             }
             catch (HttpRequestException exception)
@@ -131,7 +150,31 @@
                 var response = await client.GetAsync("/api/WeatherRecord");
                 if (response.IsSuccessStatusCode)
                 {
-                    weaterRecordHistory = await response?.Content?.ReadFromJsonAsync<List<WeatherRecord>>();
+                    var wrh = await response?.Content?.ReadFromJsonAsync<List<WeatherRecord>>();
+                    weatherRecordHistory = wrh.Select(t => new WeatherRecord
+                    {
+                        CityId = t.CityId,
+                        CityName = t.CityName,
+                        Date = t.Date.ToLocalTime(),
+                        Description = t.Description,
+                        FeelsLike = t.FeelsLike,
+                        GrndLevel = t.GrndLevel,
+                        Humidity = t.Humidity,
+                        Id = t.Id,
+                        Lat = t.Lat,
+                        Lon = t.Lon,
+                        Pressure = t.Pressure,
+                        SeaLevel = t.SeaLevel,
+                        Sunrise = t.Sunrise,
+                        Sunset = t.Sunset,
+                        Temp = t.Temp,
+                        TempMax = t.TempMax,
+                        TempMin = t.TempMin,
+                        WindDeg = t.WindDeg,
+                        WindGust = t.WindGust,
+                        WindSpeed = t.WindSpeed
+    
+                    }).ToList();
                 }
             }
             catch (HttpRequestException exception)

@@ -45,7 +45,7 @@ namespace OneStream.infra.InMemoryRepository
 
             builder.Services.AddSwaggerGen(s =>
             {
-                s.SwaggerDoc("v1", new OpenApiInfo { Title = "OneStream.OpenWeather", Version = "v1" });
+                s.SwaggerDoc("v1", new OpenApiInfo { Title = "OneStream.InMemoryReporitory", Version = "v1" });
                 s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
