@@ -9,6 +9,7 @@ using OneStream.infra.InMemoryRepository.Services;
 using OneStream.Infra.InMemoryRepository.Auth;
 using System.Text;
 using OneStream.Infra.InMemoryRepository;
+using OneStream.Domain.Services;
 
 namespace OneStream.infra.InMemoryRepository
 {

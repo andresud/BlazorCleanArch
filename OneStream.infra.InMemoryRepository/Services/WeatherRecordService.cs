@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OneStream.Domain.Entities;
+using OneStream.Domain.Services;
 using OneStream.infra.InMemoryRepository.Data;
 
 namespace OneStream.infra.InMemoryRepository.Services

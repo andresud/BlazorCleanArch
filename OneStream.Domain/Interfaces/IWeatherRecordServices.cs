@@ -2,7 +2,7 @@
 
 using OneStream.Domain.Entities;
 
-namespace OneStream.infra.InMemoryRepository.Services
+namespace OneStream.Domain.Services
 {
     public interface IWeatherRecordServices
     {

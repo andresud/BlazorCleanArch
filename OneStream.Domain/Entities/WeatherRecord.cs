@@ -6,6 +6,7 @@
         public DateTime Date { get; set; }
         public int CityId { get; set; }
         public string CityName { get; set; }
+        public string Description { get; set; }
         public double Lon { get; set; }
         public double Lat { get; set; }
         public double Temp { get; set; }       

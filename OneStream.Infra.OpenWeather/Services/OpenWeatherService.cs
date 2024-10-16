@@ -30,7 +30,7 @@ namespace OneStream.Infra.OpenWeather.Services
         public async Task<WeatherRecord> GetTheWeaterByCity(string cityReference)
         {
             //api.openweathermap.org / data / 2.5 / weather ? q = Apopka,FL, US & APPID = 211e231c2b9f5ba1c89c64630490a89e
-            var result = await _httpClient.GetFromJsonAsync<Root>($"{_httpClient.BaseAddress}2.5/weather?q={cityReference}&appid={_config.Key}");
+            var result = await _httpClient.GetFromJsonAsync<Root>($"{_httpClient.BaseAddress}2.5/weather?q={cityReference}&appid={_config.Key}&&units=imperial");
             if (result == null)
             {
                 return null;
@@ -60,6 +60,7 @@ namespace OneStream.Infra.OpenWeather.Services
                 WindSpeed = value.Wind.Speed,
                 WindDeg = value.Wind.Deg,
                 WindGust = value.Wind.Gust,
+                Description = value?.Weather?.FirstOrDefault()?.Description,
                 Id = Guid.NewGuid()
             };
 

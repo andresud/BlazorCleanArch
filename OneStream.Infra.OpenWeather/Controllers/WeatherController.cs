@@ -22,7 +22,7 @@ namespace OneStream.Infra.OpenWeather.Controllers
         public async Task<IActionResult> GetAsync(string city, string state, string country)
         {
             _logger.LogInformation($"Get city weather for {city}, {state}, {country}");
-            var result = await _openWeatherService.GetTheWeaterByCity($"{city}, {state}, {country}");
+            var result = await _openWeatherService.GetTheWeaterByCity($"{city},{state},{country}");
             if (result == null) 
             { 
                 return BadRequest(); 

@@ -10,37 +10,75 @@
 @using System.Net.Http.Headers
 
 <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">    
-
-    <MudCard Class="mt-4" Style="max-width: 600px">
+    @if (loadingData)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    }
+    <MudCard Class="mt-4" Style="max-width: 800px">
         <MudCardHeader>
             <CardHeaderAvatar>
                 <MudAvatar Color="Color.Secondary">A</MudAvatar>
             </CardHeaderAvatar>
             <CardHeaderContent>
                 <MudText Typo="Typo.body1">Apopka, FL</MudText>
-                <MudText Typo="Typo.body2">This is the Forecast for Apopka, FL</MudText>
+                <MudText Typo="Typo.body2">@($"This is the Forecast for Apopka, FL - {weatherRecord.Date.ToLocalTime().ToString()}")</MudText>
             </CardHeaderContent>
             <CardHeaderActions>
                 <MudTooltip Text="Add to the history">
-                    <MudIconButton Icon="@Icons.Material.Filled.History" Color="Color.Default" />
+                    <MudIconButton Icon="@Icons.Material.Filled.History" OnClick="@SaveForecast" Color="Color.Default" />
                 </MudTooltip>
             </CardHeaderActions>
         </MudCardHeader>
-        <MudCardMedia Image="images/pilars.jpg" Height="250" />
+        <MudCardMedia Image="../ressources/apopkamap.jpg" Height="250" />
         <MudCardContent>
-            <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+            <MudList T="string">
+                <MudListItem Text=@($"Description: {weatherRecord.Description}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.DeviceThermostat" />
+                <MudListItem Text=@($"Temperature: {weatherRecord.Temp.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Filled.Inbox" />
+                <MudListItem Text=@($"WindSpeed: {weatherRecord.WindSpeed.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.Air" />
+                <MudStack Row>
+                    <MudListItem Text=@($"Min. Temp: {weatherRecord.TempMin.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.AcUnit" />
+                    <MudListItem Text=@($"Max. Temp: {weatherRecord.TempMax.ToString()}") IconSize="Size.Small" Icon="@Icons.Material.Rounded.WbSunny" />
+                </MudStack>
+            </MudList>
         </MudCardContent>
         <MudCardActions>
             <MudTooltip Text="See the forecast history for Apopka, FL">
-                <MudIconButton Icon="@Icons.Material.Filled.List" Color="Color.Default" />            
+                <MudIconButton OnClick="@ShowHistory" Icon="@Icons.Material.Filled.List" Color="Color.Default" />                
+            </MudTooltip>
+            <MudTooltip Text="Refresh Forecast">
+                <MudIconButton OnClick="@GetData" Icon="@Icons.Material.Filled.Refresh" Color="Color.Default" />
             </MudTooltip>
         </MudCardActions>
     </MudCard>
 
+    @if (loadingList && showList)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    }
+    else if (showList && !loadingList)
+    {
+        <MudDataGrid Items="@weaterRecordHistory">
+            <Columns>
+                <PropertyColumn Property="x => x.CityName" Title="City" />
+                <PropertyColumn Property="x => x.Date.ToLocalTime()" Title="Date/Time" />
+                <PropertyColumn Property="x => x.Description" Title="Description" />
+                <PropertyColumn Property="x => x.Temp" Title="Temperature" />
+                <PropertyColumn Property="x => x.FeelsLike" Title="Feels Like" />
+                <PropertyColumn Property="x => x.WindSpeed" Title="Wind Speed" />
+            </Columns>
+        </MudDataGrid>
+    }
+
+
 </MudStack>
 
 @code {
-    private WeatherRecord weaterRecord = new WeatherRecord();
+    private bool loadingData = true;
+    private bool loadingList = false;
+    private bool showList = false;
+
+    private WeatherRecord weatherRecord = new WeatherRecord();
+    private List<WeatherRecord> weaterRecordHistory = new List<WeatherRecord>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,19 +87,82 @@
 
     private async Task GetData()
     {
+        loadingData = true;
         using (HttpClient client = new HttpClient())
         {
-            var token =  AuthProvider.GetToken;
-
-            client.BaseAddress = new Uri("https://localhost:7049");
+            client.BaseAddress = new Uri("https://localhost:7187");
             client.DefaultRequestHeaders.Add("XApiKey", _configuration["XApiKey"]);
+            try
+            {
+                var response = await client.GetAsync("api/Weather?city=Apopka&state=FL&country=US");
+                if (response.IsSuccessStatusCode)
+                {
+                    weatherRecord = await response?.Content?.ReadFromJsonAsync<WeatherRecord>();
+                }                  
+            }
+            catch (HttpRequestException exception)
+            {
+                _logger.LogError(exception, "HttpRequestException when calling the API");
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Unhandled exception when calling the API");
+
+            }
+            finally
+            {
+                loadingData = false;
+            }
+        }        
+    }
+
+    private async Task ShowHistory()
+    {
+        showList = true;
+        loadingList = true;
+
+        using (HttpClient client = new HttpClient())
+        {
+            var token = AuthProvider.GetToken;
+            client.BaseAddress = new Uri("https://localhost:7049");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             try
             {
                 var response = await client.GetAsync("/api/WeatherRecord");
                 if (response.IsSuccessStatusCode)
                 {
-                    string openWeatherResponse = await response?.Content?.ReadAsStringAsync();
-                }                  
+                    weaterRecordHistory = await response?.Content?.ReadFromJsonAsync<List<WeatherRecord>>();
+                }
+            }
+            catch (HttpRequestException exception)
+            {
+                _logger.LogError(exception, "HttpRequestException when calling the API");
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Unhandled exception when calling the API");
+            }
+            finally
+            {
+                loadingList = false;                
+            }
+        }        
+    }
+
+    private async Task SaveForecast()
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            var token = AuthProvider.GetToken;
+            client.BaseAddress = new Uri("https://localhost:7049");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            try
+            {
+                var response = await client.PostAsJsonAsync("/api/WeatherRecord", weatherRecord);
+                if (response.IsSuccessStatusCode)
+                {
+                    weatherRecord = await response?.Content?.ReadFromJsonAsync<WeatherRecord>();
+                }
             }
             catch (HttpRequestException exception)
             {

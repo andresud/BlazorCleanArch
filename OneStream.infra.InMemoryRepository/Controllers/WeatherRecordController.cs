@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OneStream.Domain.Entities;
+using OneStream.Domain.Services;
 using OneStream.infra.InMemoryRepository.Services;
 
 namespace OneStream.infra.InMemoryRepository.Controllers
