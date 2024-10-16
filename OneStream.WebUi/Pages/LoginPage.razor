@@ -30,8 +30,7 @@
         {
             client.BaseAddress = new Uri("https://localhost:7049");
             try
-            {
-                var address = client.BaseAddress + "api/Auth/login";
+            {                
                 var response = await client.PostAsJsonAsync("/api/Auth/login", loginModel);
 
                 if (response.IsSuccessStatusCode)

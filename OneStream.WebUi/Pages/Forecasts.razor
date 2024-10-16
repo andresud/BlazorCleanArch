@@ -2,9 +2,12 @@
 @inject TokenAuthenticationStateProvider AuthProvider
 @inject NavigationManager Nav
 @inject ILogger<LoginPage> _logger
+@inject IConfiguration _configuration
+
 @using OneStream.Domain.Entities
 @using OneStream.WebUi.Providers
 @using System.Text.Json
+@using System.Net.Http.Headers
 
 <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">    
 
@@ -41,6 +44,34 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
+        await GetData();
+    }
+
+    private async Task GetData()
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            var token =  AuthProvider.GetToken;
+
+            client.BaseAddress = new Uri("https://localhost:7049");
+            client.DefaultRequestHeaders.Add("XApiKey", _configuration["XApiKey"]);
+            try
+            {
+                var response = await client.GetAsync("/api/WeatherRecord");
+                if (response.IsSuccessStatusCode)
+                {
+                    string openWeatherResponse = await response?.Content?.ReadAsStringAsync();
+                }                  
+            }
+            catch (HttpRequestException exception)
+            {
+                _logger.LogError(exception, "HttpRequestException when calling the API");
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Unhandled exception when calling the API");
+
+            }
+        }
     }
 }

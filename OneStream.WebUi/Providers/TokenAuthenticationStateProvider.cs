@@ -11,6 +11,15 @@ namespace OneStream.WebUi.Providers
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService SecureStorage;
 
+        private string Token = "";
+
+        public string GetToken {
+            get
+            {
+                return Token;
+            }
+        }
+
         public TokenAuthenticationStateProvider(HttpClient httpClient, ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
@@ -35,6 +44,12 @@ namespace OneStream.WebUi.Providers
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var token = await SecureStorage.GetItemAsStringAsync("authToken");
+
+            if (token != null)
+            {
+                Token = token;
+            }
+
             var identity = new ClaimsIdentity();
 
             if (!string.IsNullOrEmpty(token))
